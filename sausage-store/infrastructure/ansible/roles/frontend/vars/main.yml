@@ -1,0 +1,10 @@
+---
+# vars file for frontend
+service_user: www-data
+group_user: www-data
+repository_url: https://nexus.praktikum-services.tech/repository/std-037-51-frontend
+group_id: /{{version}}
+artifact_id: /{{version}}/sausage-store-1-{{version}}.tar.gz
+version: 1.0.1869473
+artifact_dest: /home/
+systemd_unit_file_path: /etc/systemd/system/frontend.service

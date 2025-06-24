@@ -1,0 +1,77 @@
+---
+# tasks file for frontend
+- name: Update apt cache
+  apt:
+    update_cache: yes
+
+- name: Install required packages
+  apt:
+    name: curl
+    state: present
+
+- name: Download NodeSource setup script
+  get_url:
+    url: https://deb.nodesource.com/setup_23.x
+    dest: /tmp/nodesource_setup.sh
+    mode: '0755'
+
+- name: Run NodeSource setup script
+  shell: /bin/bash /tmp/nodesource_setup.sh
+
+- name: Install Node.js
+  apt:
+    name: nodejs
+    state: present
+
+- name: Create www-data user
+  user:
+    name: "{{ service_user }}"
+    system: yes
+    create_home: no
+    shell: /usr/sbin/nologin
+   
+- name: Create /var/www-data directory
+  file:
+    path: /var/www-data
+    state: directory
+    owner: "{{ service_user }}"
+    group: "{{ group_user }}"
+    mode: '0755'
+
+- name: Check if frontend folder already exists
+  stat:
+    path: /opt/sausage-store/static/dist/frontend/
+  register: frontend_folder_stat
+
+- name: Create directory structure for frontend
+  file:
+    path: /opt/sausage-store/static/dist/frontend/
+    state: directory
+    owner: "{{ service_user }}"
+    group: "{{ group_user }}"
+    mode: '0755'
+  when: not frontend_folder_stat.stat.exists 
+
+- name: Download frontend artifact from Nexus 
+  shell: sudo curl -u {{nexus_usr}}:{{nexus_pwd}} -o ~/sausage-store-{{ version }}.tar.gz https://nexus.praktikum-services.tech/repository/std-037-51-frontend/{{ version }}/sausage-store-{{ version }}.tar.gz
+  args:
+    executable: /bin/bash
+
+- name: Unpack the Sausage Store archive
+  unarchive:
+    src: "~/sausage-store-{{ version }}.tar.gz"  
+    dest: "/opt/sausage-store/static/dist/frontend/"
+    remote_src: yes
+
+- name: Remove the downloaded archive
+  file:
+    path: "~/sausage-store-{{ version }}.tar.gz"
+    state: absent
+
+- name: Generate and restart frontend service
+  template:
+    src:  /home/eugene/ansible/roles/frontend/tasks/frontend.service.j2
+    dest: "{{ systemd_unit_file_path }}"
+  notify: 
+    - Reload systemd
+    - Restart frontend.service

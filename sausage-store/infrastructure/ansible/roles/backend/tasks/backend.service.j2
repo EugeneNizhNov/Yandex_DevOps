@@ -1,0 +1,16 @@
+[Unit]
+Description=Backend Service
+After=network.target
+
+[Service]
+Type=exec
+User={{ service_user }}
+Group={{ group_user }}
+WorkingDirectory={{ backend_working_dir }}
+Environment="REPORT_PATH={{ backend_working_dir }}reports"
+Environment="LOG_PATH={{ backend_working_dir }}logs"
+ExecStart=java -jar /opt/sausage-store/bin/sausage-store-{{ version}}-SNAPSHOT.jar
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target

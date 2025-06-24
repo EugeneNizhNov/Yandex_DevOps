@@ -1,0 +1,10 @@
+---
+# handlers file for frontend
+- name: Reload systemd  
+  systemd:
+    daemon_reload: yes 
+    
+- name: Restart frontend.service
+  systemd:
+    name: frontend.service
+    state: restarted

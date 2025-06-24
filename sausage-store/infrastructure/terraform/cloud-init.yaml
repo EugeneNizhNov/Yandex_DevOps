@@ -1,0 +1,10 @@
+#cloud-config
+users:
+  - name: ansible
+    primary_group: ansible
+    groups: sudo, ansible
+    shell: /bin/bash
+    sudo: ['ALL=(ALL) NOPASSWD:ALL']
+    ssh-authorized-keys:
+    - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIFfX1MI/joCrkSvm8TIva/Z7kX2PAYPXffBgUzHhkYIj eugene@terraform
+

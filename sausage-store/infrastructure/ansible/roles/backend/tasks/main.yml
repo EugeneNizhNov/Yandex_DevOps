@@ -1,0 +1,45 @@
+---
+# tasks file for backend
+    - name: Install Java OpenJDK
+      apt:
+        name: "{{ java_package_name }}"
+        state: present
+        update_cache: yes
+   
+    - name: Create a service user
+      user:
+        name: "{{ service_user }}"
+        create_home: no
+        shell: /sbin/nologin
+
+    - name: Install python3-lxml
+      apt:
+        name: python3-lxml
+        state: present
+   
+    - name: Create dir
+      command: sudo mkdir -p /opt/sausage-store /opt/sausage-store/bin
+        
+    - name: Download backend artifact from Nexus 
+      maven_artifact:
+        repository_url: "{{ repository_url }}"
+        group_id: "{{ group_id }}"
+        artifact_id: "{{ artifact_id }}"
+        version: "{{ version }}"
+        username:  "{{ nexus_usr }}" 
+        password:  "{{ nexus_pwd }}"  
+        timeout: 60
+        dest: "{{ artifact_dest }}"
+        owner: "{{ service_user }}"
+        group: "{{ group_user }}"
+        mode: 0755    
+    
+    - name: Generate and restart backend service
+      template:
+        src:  /home/eugene/ansible/roles/backend/tasks/backend.service.j2
+        dest: "{{ systemd_unit_file_path }}"
+      notify: 
+        - Reload systemd
+        - Restart backend.service
+
+    

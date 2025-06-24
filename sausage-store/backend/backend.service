@@ -1,0 +1,33 @@
+[Unit]
+Description=Backend Service
+After=network.target
+
+[Service]
+Type=exec
+User=backend
+Group=backend
+WorkingDirectory=/var/sausage-store/
+Environment="REPORT_PATH=/var/sausage-store/reports"
+Environment="LOG_PATH=/var/sausage-store/logs"
+Environment=JAVA_HOME="/usr/lib/jvm/java-16-openjdk-amd64"
+Environment=PSQL_USER="std-037-51"
+Environment=PSQL_PASSWORD="Testusr1234"
+Environment=PSQL_HOST="rc1d-euwb8o1dsawoaioy.mdb.yandexcloud.net"
+Environment=PSQL_DBNAME="std-037-51"
+Environment=PSQL_PORT="6432"
+Environment=SPRING_DATASOURCE_URL="jdbc:postgresql://${PSQL_HOST}:${PSQL_PORT}/${PSQL_DBNAME}?ssl=true&sslrootcert=/home/student/.postgresql/root.crt"
+Environment=SPRING_DATASOURCE_USERNAME="${PSQL_USER}"
+Environment=SPRING_DATASOURCE_PASSWORD="${PSQL_PASSWORD}"
+
+Environment=MONGO_USER="std-037-51"
+Environment=MONGO_PASSWORD="Testusr1234"
+Environment=MONGO_HOST="rc1d-dakernq92dqb11kz.mdb.yandexcloud.net"
+Environment=MONGO_DATABASE="std-037-51"
+
+Environment=SPRING_DATA_MONGODB_URI="mongodb://${MONGO_USER}:${MONGO_PASSWORD}@${MONGO_HOST}:27018/${MONGO_DATABASE}?tls=true"
+
+ExecStart=/usr/lib/jvm/java-16-openjdk-amd64/bin/java -jar /opt/sausage-store/bin/sausage-store-backend.jar
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target

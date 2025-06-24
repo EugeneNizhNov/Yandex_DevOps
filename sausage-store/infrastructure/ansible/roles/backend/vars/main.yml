@@ -1,0 +1,13 @@
+---
+# vars file for backend
+    java_package_name: openjdk-16-jdk
+    service_user: backend
+    group_user: backend
+    repository_url: https://nexus.praktikum-services.tech/repository/std-037-51-backend
+    group_id: com.yandex.practicum.devops
+    artifact_id: sausage-store
+    version: 1.0.1869472
+    artifact_dest: /opt/sausage-store/bin
+    backend_working_dir: /var/sausage-store/  
+    systemd_unit_file_path: /etc/systemd/system/backend.service
+    

@@ -1,0 +1,10 @@
+---
+- name: install backend
+  hosts: sausage
+  become: yes
+  vars_files:
+    - /home/eugene/ansible/vault-vars.yml
+  roles: 
+    - backend
+    - frontend
+
